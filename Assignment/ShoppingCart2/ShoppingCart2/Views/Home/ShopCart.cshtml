@@ -1,0 +1,114 @@
+﻿@model IEnumerable<ShoppingCart2.Models.ShopCart>
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<br />
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8" style="border:1px solid gray">
+        <br />
+        <p style="color:darkgoldenrod">your shopping cart</p>
+        <br />
+        <table class="table table-condensed">
+            <tr class="success">
+                <td colspan="4">Description</td>
+                <td>Item Price</td>
+                <td>Quantity</td>
+                <td>Amount</td>
+            </tr>
+            @{
+                decimal totalPrice = 0;
+                foreach (var shopCart in Model)
+                {
+                    <tr>
+                        <td colspan="4">@shopCart.ProductName</td>
+                        <td>@shopCart.Price</td>
+                        <td>@shopCart.Quantity</td>
+                        <td>$ @shopCart.Price</td>
+                    </tr>
+                    totalPrice += shopCart.Price * shopCart.Quantity;
+                }
+                <tr>
+                    <td><a href="/Home/Index" class="btn btn-primary">Continue Shopping</a></td>
+                    <td colspan="5"></td>
+                    <td id="Price">Total : $ @totalPrice</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="6"></td>
+                <td>
+                    <div id="paypal-button"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <hr />
+    <div class="col-md-2"></div>
+</div>
+<script>
+    (function () {
+        paypal.Button.render({
+            env: 'sandbox', // Or 'sandbox',
+
+            style: {
+                size: 'small', // small | medium | large | responsive
+                shape: 'pill',  // pill | rect
+                tagline: false
+            },
+
+            client: {
+                sandbox: 'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
+                production: 'Ad4mxRD4QdXR69LYCpFt194ICCpUgFikz4CbDwmzarhHxO5pNs6mne1t7J4QwhC4ZSs-PY9USnpVI1lT'
+            },
+
+            // Show the buyer a 'Pay Now' button in the checkout flow
+            commit: true,
+
+            payment: function (data, actions) {
+                return actions.payment.create({
+                    payment: {
+                        transactions: [
+                            {
+                                amount: { total: @totalPrice, currency: 'USD' }
+                            }
+                        ]
+                    }
+                });
+            },
+
+            onAuthorize: function (data, actions) {
+                return actions.payment.execute().then(function (payment) {
+                    console.log(payment);
+                    var shipping_address = payment.payer.payer_info.shipping_address;
+                    var transaction_id = payment.transactions[0].related_resources[0].sale.id;
+                    var created_time = payment.create_time;
+                    var name = payment.payer.payer_info.first_name + " " + payment.payer.payer_info.last_name;
+                    var address = shipping_address.line1 + " " + shipping_address.city + " " + shipping_address.state + " " + shipping_address.postal_code + " " + shipping_address.city;
+                    var recipient_name = shipping_address.recipient_name;
+                    console.log(transaction_id);
+                    console.log(created_time);
+                    console.log(name);
+                    console.log(address);
+                    console.log(recipient_name);
+                    if (payment != null) {
+                        window.location.href = "/Transaction/Success?transaction_id=" + transaction_id + "&name=" + name + "&address=" + address + "&created_time=" + created_time + "&recipient_name=" + recipient_name;
+                    }
+                });
+            },
+
+            onCancel: function (data, actions) {
+                /*
+                 * Buyer cancelled the payment
+                 */
+            },
+
+            onError: function (err) {
+                /*
+                 * An error occurred during the transaction
+                 */
+            }
+        }, '#paypal-button');
+    })();
+</script>

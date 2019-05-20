@@ -1,0 +1,12 @@
+﻿@model ShoppingCart2.Models.TransactionDetail
+@{
+    ViewBag.Title = "Sucess";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<br />
+<p>Thank you @Model.Name</p>
+<p>The transaction had been done with <b styel="color:red">ID : @Model.Id </b></p>
+<p>@Html.ActionLink("Show All Transaction", "ShowAllTransaction", new { @class = "btn btn-primary" })</p>
+

@@ -1,0 +1,38 @@
+﻿@model ShoppingCart2.Models.Product
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h3>@Model.Name</h3>
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="thumbnail image-border">
+                <img src="@Model.ImageUrl"
+                     alt="Vanilla White Amber Perfume">
+            </div>
+        </div>
+        <div class="col-md-5">
+            <h3>$@Html.DisplayFor(p => p.Price)</h3>
+            @Html.HiddenFor(p => p.ProductId)
+            @Html.HiddenFor(p => p.Name)
+            @Html.HiddenFor(p => p.Price)
+            @Html.HiddenFor(p => p.Description)
+            @Html.HiddenFor(p => p.ImageUrl)
+            <p>@Html.DisplayFor(p => p.Description)</p>
+            <p>@Html.DisplayFor(p => p.Name)</p>
+            <br />
+            <br />
+            <input type="submit" value="Add to Cart" class="btn btn-danger" />
+        </div>
+    </div>
+</div>
+}

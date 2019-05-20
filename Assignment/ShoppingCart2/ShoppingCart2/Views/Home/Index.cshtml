@@ -1,0 +1,33 @@
+﻿@model IEnumerable<ShoppingCart2.Models.Product>
+@{
+    ViewBag.Title = "Paypal Demo";
+}
+
+<style>
+    a:hover {
+        text-decoration: none;
+    }
+
+    .image-border:hover {
+        border: 2px solid blue;
+    }
+</style>
+
+<h2>Top Selling Items</h2>
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-sm-6 col-md-3">
+            <a href="@Url.Action("Detail", "Home",new { productId = product.ProductId})">
+                <div class="thumbnail image-border">
+                    <img src="@product.ImageUrl"
+                         alt="Vanilla White Amber Perfume">
+                    <div class="caption">
+                        <h3>@product.Name</h3>
+                        <p>Price: $@product.Price</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>
